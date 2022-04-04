@@ -77,7 +77,7 @@ class Parser:
 
                 if not is_valid_req(req):
                     raise ValueError(
-                        "'{req}' is not a valid requirement string "
+                        f"'{req}' is not a valid requirement string "
                         f"{self.fpath}:{self.line_num}"
                     )
 
