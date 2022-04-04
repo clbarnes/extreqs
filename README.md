@@ -78,6 +78,7 @@ setup(
 # pyproject.toml
 [build-system]
 requires = ["setuptools", "extreqs"]
+build-backend = "setuptools.build_meta"
 ```
 
 Look out for dependency specifiers which are accepted by pip, but not by setuptools (e.g. editable install `-e` or references to other requirement files `-r`).
