@@ -1,8 +1,9 @@
 import logging
+import typing as tp
 from collections import defaultdict
 from pathlib import Path
+
 import pkg_resources
-import typing as tp
 
 logger = logging.getLogger(__name__)
 
@@ -96,11 +97,12 @@ def merge_install_extras(*install_extras):
         install.extend(install2)
         for k, v in extras2.items():
             extras[k].extend(v)
-    return install, extras
+    return install, dict(extras)
 
 
 def parse_requirement_files(
-    *req_files: Path, **extra_req_files: Path,
+    *req_files: Path,
+    **extra_req_files: Path,
 ) -> tp.Tuple[tp.List[str], tp.Dict[str, tp.List[str]]]:
     """Parse requirements files into setuptools requirements.
 

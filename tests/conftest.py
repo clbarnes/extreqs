@@ -1,5 +1,6 @@
-import pytest
 from pathlib import Path
+
+import pytest
 
 here = Path(__file__).resolve().parent
 

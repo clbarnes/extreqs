@@ -1,0 +1,9 @@
+dep1
+dep2  #extra: extra1
+
+#extra: extra2
+dep3
+
+#extra: extra3  # you can still have freeform comments!
+dep4  #extra: extra4 extra5
+dep5
