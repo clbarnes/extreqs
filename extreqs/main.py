@@ -124,6 +124,36 @@ def parse_requirement_files(
     return merge_install_extras(*to_merge)
 
 
+class ParsedFiles(tp.TypedDict):
+    install_requires: tp.List[str]
+    extras_require: tp.Dict[str, tp.List[str]]
+
+
+def parse_requirement_files_dict(
+    *req_files: Path,
+    **extra_req_files: Path,
+) -> ParsedFiles:
+    """Parse requirements files into ``setuptools.setup`` kwargs.
+
+    Requirements files whose listed dependencies all belong to
+    a particular extra should be passed as keyword arguments,
+    `extra_name="path/to/requirements.txt"`.
+
+    Returns
+    -------
+    ParsedFiles
+        Dict which can be used as kwargs for ``setuptools.setup``, like
+        {
+            "install_requires": ["list", "of", "requirements"],
+            "extras_require": {"extra_name": ["some", "requirement]}
+        }
+    """
+    install_requires, extras_require = parse_requirement_files(
+        *req_files, **extra_req_files
+    )
+    return ParsedFiles(install_requires=install_requires, extras_require=extras_require)
+
+
 def is_valid_req(req):
     try:
         reqs = list(pkg_resources.parse_requirements(req))

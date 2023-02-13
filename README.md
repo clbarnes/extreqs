@@ -5,10 +5,11 @@ Parse python requirements.txt files into setuptools extras.
 ## Usage
 
 `extreqs` looks for special comments (`#extra:`) in your requirements files.
-Note the lack of space!
+Note the lack of space after the `#`!
 Anything which follows that (until the end of line, or another `#`) is treated as a whitespace-separated list of extras.
+For example, `#extra: dev test doc` marks dependencies belonging to the `dev`, `test`, and `doc` extras.
 
-If the `#extra:` comment is on the same line as (following) a dependency, then that dependency belongs to that extra.
+If the `#extra:` comment is on the same line as (following) a dependency, then just that dependency belongs to that extra.
 If the `#extra:` comment is on a line on its own, all dependencies below it belong to that extra, until the next `#extra:` line.
 
 For example:
@@ -48,15 +49,15 @@ In your `setup.py`:
 
 ```python
 #!/usr/bin/env python3
-# setup.py
+"""setup.py"""
 from pathlib import Path
 
-from extreqs import parse_requirements_files
+from extreqs import parse_requirements_files_dict
 from setuptools import setup
 
 here = Path(__file__).resolve().parent
 
-install_requires, extras_require = parse_requirements_files(
+req_kwargs = parse_requirements_files_dict(
     # files without an extra context are in *args
     here / "requirements.txt",
     # files with an extra context are in **kwargs
@@ -66,8 +67,7 @@ install_requires, extras_require = parse_requirements_files(
 setup(
     name="my_package",
     ...
-    install_requires=install_requires,
-    extras_require=extras_require,
+    **req_kwargs,
     ...
 )
 ```
