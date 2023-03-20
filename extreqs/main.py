@@ -2,6 +2,7 @@ import logging
 import typing as tp
 from collections import defaultdict
 from pathlib import Path
+import sys
 
 import pkg_resources
 
@@ -101,14 +102,22 @@ def merge_install_extras(*install_extras):
 
 
 def parse_requirement_files(
-    *req_files: Path,
-    **extra_req_files: Path,
+    *req_files: Path, **extra_req_files: Path,
 ) -> tp.Tuple[tp.List[str], tp.Dict[str, tp.List[str]]]:
     """Parse requirements files into setuptools requirements.
 
     Requirements files whose listed dependencies all belong to
     a particular extra should be passed as keyword arguments,
     `extra_name="path/to/requirements.txt"`.
+
+    Parameters
+    ----------
+    *req_files: Path
+        Requirements files to parse, whose contents
+        will have no additional context.
+    **extra_req_files: Path
+        Requirements files to parse, whose elements
+        will all have the additional context given by the kwarg's key.
 
     Returns
     -------
@@ -124,14 +133,17 @@ def parse_requirement_files(
     return merge_install_extras(*to_merge)
 
 
-class ParsedFiles(tp.TypedDict):
-    install_requires: tp.List[str]
-    extras_require: tp.Dict[str, tp.List[str]]
+if sys.version_info < (3, 8):
+    ParsedFiles = dict
+else:
+
+    class ParsedFiles(tp.TypedDict):
+        install_requires: tp.List[str]
+        extras_require: tp.Dict[str, tp.List[str]]
 
 
 def parse_requirement_files_dict(
-    *req_files: Path,
-    **extra_req_files: Path,
+    *req_files: Path, **extra_req_files: Path,
 ) -> ParsedFiles:
     """Parse requirements files into ``setuptools.setup`` kwargs.
 
@@ -139,13 +151,22 @@ def parse_requirement_files_dict(
     a particular extra should be passed as keyword arguments,
     `extra_name="path/to/requirements.txt"`.
 
+    Parameters
+    ----------
+    *req_files: Path
+        Requirements files to parse, whose contents
+        will have no additional context.
+    **extra_req_files: Path
+        Requirements files to parse, whose elements
+        will all have the additional context given by the kwarg's key.
+
     Returns
     -------
     ParsedFiles
         Dict which can be used as kwargs for ``setuptools.setup``, like
         {
             "install_requires": ["list", "of", "requirements"],
-            "extras_require": {"extra_name": ["some", "requirement]}
+            "extras_require": {"extra_name": ["some", "requirement]},
         }
     """
     install_requires, extras_require = parse_requirement_files(
