@@ -1,8 +1,8 @@
 import logging
+import sys
 import typing as tp
 from collections import defaultdict
 from pathlib import Path
-import sys
 
 import pkg_resources
 
@@ -102,7 +102,8 @@ def merge_install_extras(*install_extras):
 
 
 def parse_requirement_files(
-    *req_files: Path, **extra_req_files: Path,
+    *req_files: Path,
+    **extra_req_files: Path,
 ) -> tp.Tuple[tp.List[str], tp.Dict[str, tp.List[str]]]:
     """Parse requirements files into setuptools requirements.
 
@@ -143,7 +144,8 @@ else:
 
 
 def parse_requirement_files_dict(
-    *req_files: Path, **extra_req_files: Path,
+    *req_files: Path,
+    **extra_req_files: Path,
 ) -> ParsedFiles:
     """Parse requirements files into ``setuptools.setup`` kwargs.
 
