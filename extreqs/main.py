@@ -3,6 +3,7 @@ import sys
 import typing as tp
 from collections import defaultdict
 from pathlib import Path
+import warnings
 
 import pkg_resources
 
@@ -15,6 +16,9 @@ def str_as_list(s: tp.Optional[tp.Union[str, tp.List[str]]]) -> tp.List[str]:
     if isinstance(s, str):
         return [s]
     return s
+
+
+UNSUPPORTED_VCS = {"git", "hg", "svn", "bzr"}
 
 
 class Parser:
@@ -44,6 +48,15 @@ class Parser:
         req = req.strip()
         if req.startswith("#"):
             return None
+
+        components = req.split("+", maxsplit=1)
+        if len(components) == 2:
+            vcs = components[0]
+            if vcs in UNSUPPORTED_VCS:
+                raise RuntimeError(
+                    f"Invalid VCS dependency `{req}`. Use this format instead: "
+                    "`{package_name} @ {vcs}+{url}`"
+                )
 
         if len(extra_specs) > 1:
             logger.warning(
@@ -127,11 +140,13 @@ def parse_requirement_files(
         `install_requires` and `extras_require` arguments
         respectively.
     """
-    to_merge = [Parser(fpath).parse() for fpath in req_files]
-    to_merge.extend(
-        Parser(fpath, extra).parse() for extra, fpath in extra_req_files.items()
+    warnings.warn(
+        "extreqs.parse_requirement_files is deprecated, "
+        "use extreqs.parse_requirement_files_dict instead",
+        DeprecationWarning,
     )
-    return merge_install_extras(*to_merge)
+    d = parse_requirement_files_dict(*req_files, **extra_req_files)
+    return (d["install_requires"], d["extras_require"])
 
 
 if sys.version_info < (3, 8):
@@ -171,10 +186,15 @@ def parse_requirement_files_dict(
             "extras_require": {"extra_name": ["some", "requirement]},
         }
     """
-    install_requires, extras_require = parse_requirement_files(
-        *req_files, **extra_req_files
+    to_merge = [Parser(fpath).parse() for fpath in req_files]
+    to_merge.extend(
+        Parser(fpath, extra).parse() for extra, fpath in extra_req_files.items()
     )
-    return ParsedFiles(install_requires=install_requires, extras_require=extras_require)
+    install_requires, extras_require = merge_install_extras(*to_merge)
+    return ParsedFiles(
+        install_requires=install_requires,
+        extras_require=extras_require,
+    )
 
 
 def is_valid_req(req):
