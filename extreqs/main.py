@@ -1,9 +1,9 @@
 import logging
 import sys
 import typing as tp
+import warnings
 from collections import defaultdict
 from pathlib import Path
-import warnings
 
 import pkg_resources
 
