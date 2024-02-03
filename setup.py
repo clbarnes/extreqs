@@ -14,7 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     packages=find_packages(include=["extreqs"]),
     install_requires=["packaging"],
-    python_requires=">=3.7, <4.0",
+    python_requires=">=3.8, <4.0",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
