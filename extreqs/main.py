@@ -4,7 +4,7 @@ import typing as tp
 from collections import defaultdict
 from pathlib import Path
 
-from packaging.requirements import Requirement, InvalidRequirement
+from packaging.requirements import InvalidRequirement, Requirement
 
 logger = logging.getLogger(__name__)
 
