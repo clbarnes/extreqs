@@ -13,7 +13,7 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     packages=find_packages(include=["extreqs"]),
-    install_requires=["setuptools"],
+    install_requires=["packaging"],
     python_requires=">=3.7, <4.0",
     classifiers=[
         "Development Status :: 3 - Alpha",

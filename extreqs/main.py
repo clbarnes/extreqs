@@ -1,11 +1,10 @@
 import logging
 import sys
 import typing as tp
-import warnings
 from collections import defaultdict
 from pathlib import Path
 
-import pkg_resources
+from packaging.requirements import Requirement, InvalidRequirement
 
 logger = logging.getLogger(__name__)
 
@@ -140,11 +139,6 @@ def parse_requirement_files(
         `install_requires` and `extras_require` arguments
         respectively.
     """
-    warnings.warn(
-        "extreqs.parse_requirement_files is deprecated, "
-        "use extreqs.parse_requirement_files_dict instead",
-        DeprecationWarning,
-    )
     d = parse_requirement_files_dict(*req_files, **extra_req_files)
     return (d["install_requires"], d["extras_require"])
 
@@ -197,11 +191,9 @@ def parse_requirement_files_dict(
     )
 
 
-def is_valid_req(req):
+def is_valid_req(req: str):
     try:
-        reqs = list(pkg_resources.parse_requirements(req))
-        if len(reqs) != 1:
-            return False
-    except Exception:
+        Requirement(req)
+        return True
+    except InvalidRequirement:
         return False
-    return True
