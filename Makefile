@@ -1,29 +1,16 @@
 .PHONY: fmt
 fmt:
-	isort . \
-	&& black .
+	ruff format src tests
 
 .PHONY: lint
 lint:
-	black --check .
-	isort --check .
-	flake8 .
-
-lint-type: lint
-	mypy .
+	ruff check src tests
+	mypy src tests
+	ruff format --check src tests
 
 .PHONY: test
 test:
 	pytest --verbose
-
-.PHONY: install
-install:
-	pip install .
-
-.PHONY: install-dev
-install-dev:
-	pip install -r requirements.txt \
-	&& pip install -e .
 
 .PHONY: clean-docs
 clean-docs:

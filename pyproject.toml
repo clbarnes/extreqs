@@ -1,10 +1,31 @@
+[project]
+name = "extreqs"
+version = "1.2.0"
+description = "Parse python requirements.txt files into setuptools extras"
+requires-python = ">=3.10,<4.0"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+dependencies = [
+    "requirements-parser>=0.13.0",
+]
+
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.10.0,<0.11.0"]
+build-backend = "uv_build"
 
-[tool.setuptools_scm]
-write_to = "extreqs/version.py"
-
-[tool.isort]
-profile = "black"
-multi_line_output = 3
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pdoc3>=0.11.6",
+    "pytest>=9.0.2",
+    "ruff>=0.15.0",
+]

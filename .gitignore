@@ -141,3 +141,6 @@ extreqs/version.py
 
 docs/
 env/
+
+*.bak.*
+.*cache/
