@@ -2,6 +2,9 @@
 
 Parse python requirements.txt files into setuptools extras.
 
+`extreqs` is a build-time dependency used in projects with a `requirements.txt` and a `setup.py`,
+where the `setup.py` reads the `requirements.txt` to determine the runtime dependencies.
+
 ## Do not use this package
 
 `extreqs` was written in a simpler but much worse time for python packaging.
