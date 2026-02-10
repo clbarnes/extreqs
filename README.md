@@ -116,9 +116,10 @@ Contributions are welcome, although any broadening of extreqs' scope is unlikely
 Releases are made like this
 
 ```sh
-# commit all your changes
+# commit all your changes, push, and ensure that CI passes
 git add .
 git commit -m "Prepare for a new version"
+git push
 
 # bump the version
 uv version --bump minor
