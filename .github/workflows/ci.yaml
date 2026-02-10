@@ -15,7 +15,6 @@ jobs:
         with:
           cache-python: "true"
           activate-environment: "true"
-      - run: pip install $(grep -E '^(black|flake8|isort|mypy)' requirements.txt)
       - run: make lint
 
   test:
@@ -36,13 +35,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache-python: "true"
           activate-environment: "true"
-      - run: |
-          pip install -U pip wheel setuptools
-          pip install -r requirements.txt
-        name: Install dependencies
-      - run: |
-          pip install .
-        name: Install package
       - run: pytest --verbose
 
   deploy-package:
@@ -55,8 +47,6 @@ jobs:
         with:
           cache-python: "true"
           activate-environment: "true"
-      - run: pip install build
-      - run: python -m build --sdist --wheel -o dist/ .
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@master
         with:
