@@ -4,7 +4,7 @@ import typing as tp
 from collections import defaultdict
 from pathlib import Path
 
-from packaging.requirements import InvalidRequirement, Requirement
+from requirements.requirement import Requirement
 
 logger = logging.getLogger(__name__)
 
@@ -88,11 +88,12 @@ class Parser:
 
                 req, context = result
 
-                if not is_valid_req(req):
+                try:
+                    Requirement.parse(req)
+                except ValueError as e:
                     raise ValueError(
-                        f"'{req}' is not a valid requirement string "
-                        f"{self.fpath}:{self.line_num}"
-                    )
+                        f"'{req}' ({self.fpath}:{self.line_num}) is not a valid requirement string: {e}"
+                    ) from e
 
                 if not context:
                     install_requires.append(req)
@@ -193,7 +194,7 @@ def parse_requirement_files_dict(
 
 def is_valid_req(req: str):
     try:
-        Requirement(req)
+        Requirement.parse(req)
         return True
-    except InvalidRequirement:
+    except ValueError:
         return False

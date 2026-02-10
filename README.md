@@ -2,6 +2,29 @@
 
 Parse python requirements.txt files into setuptools extras.
 
+## Do not use this package
+
+`extreqs` was written in a simpler but much worse time for python packaging.
+Historically, `setup.cfg` or `setup.py` was used to specify runtime dependencies.
+Applications were supposed to use strict version constraints,
+and libraries permissive version constraints.
+
+For CI and development purposes,
+it was convenient to use `requirements.txt` files to fix specific versions,
+or to specify additional dependencies used at development time and not at runtime.
+
+This meant manually syncing two files, which is a pain.
+So the intended walls between the use of `requirements.txt` and `setup.py` started to break down, and a pattern emerged of parsing your single-source-of-truth `requirements.txt` to feed into your `setup.py`.
+
+`extreqs` was developed to fill the need of describing ["extras"](https://stackoverflow.com/questions/52474931/what-is-extra-in-pypi-dependency) while still maintaining `requirements.txt` as your single source of truth.
+`extreqs` was always intended primarily to support application development,
+but could be used for library development as well as a bridge (or crutch?) for people who preferred using `requirements.txt` for specifying dependencies.
+
+Today, various development tools, most notably [`uv`](https://docs.astral.sh/uv/), handle lock files for you based on the canonical `pyproject.toml` dependency list, which also handles extras and groups (for development dependencies).
+Those tools, in particular `uv`, should be used instead.
+
+This package is maintained for legacy purposes.
+
 ## Usage
 
 `extreqs` looks for special comments (`#extra:`) in your requirements files.
@@ -17,13 +40,13 @@ For example:
 ```txt
 # requirements.txt
 dep1
-dep2  #extra: extra1
+dep2  #extra: e1
 
-#extra: extra2
+#extra: e2
 dep3
 
-#extra: extra3  # you can still have freeform comments!
-dep4  #extra: extra4 extra5
+#extra: e3  # you can still have freeform comments!
+dep4  #extra: e4 e5
 dep5
 ```
 
@@ -32,11 +55,11 @@ would be parsed into
 ```python
 install_requires = ["dep1"]
 extras_require = {
-    "extra1": ["dep2"],
-    "extra2": ["dep3"],
-    "extra3": ["dep4", "dep5"],
-    "extra4": ["dep4"],
-    "extra5": ["dep4"],
+    "e1": ["dep2"],
+    "e2": ["dep3"],
+    "e3": ["dep4", "dep5"],
+    "e4": ["dep4"],
+    "e5": ["dep4"],
 }
 ```
 
@@ -82,11 +105,3 @@ build-backend = "setuptools.build_meta"
 ```
 
 Look out for dependency specifiers which are accepted by pip, but not by setuptools (e.g. editable install `-e` or references to other requirement files `-r`).
-
-## Notes
-
-This package should only be used in certain circumstances, and may lead to bad habits if over-used.
-Requirements files are intended for specifying reproducible (i.e. hard version constraints), maximal environments for other developers, CI, and so on to be able to run all tests, features, lints etc..
-Package dependencies are intended to specify the minimal dependencies with permissive version constraints for users to install the package for use.
-
-This package is, therefore, more applicable to distributing applications (CLI, web backends, etc.) than it is libraries.
