@@ -42,15 +42,19 @@ jobs:
   deploy-package:
     runs-on: ubuntu-22.04
     needs: [lint, test]
+    environment:
+      name: pypi
+    permissions:
+      id-token: write
+      contents: read
+
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7
         with:
           cache-python: "true"
           activate-environment: "true"
-      - name: Publish package
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          user: __token__
-          password: ${{ secrets.pypi_password }}
+      - run: uv build
+      - run: uv publish
