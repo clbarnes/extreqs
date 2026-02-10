@@ -15,6 +15,7 @@ jobs:
         with:
           cache-python: "true"
           activate-environment: "true"
+      - run: uv sync
       - run: make lint
 
   test:
@@ -35,6 +36,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache-python: "true"
           activate-environment: "true"
+      - run: uv sync
       - run: pytest --verbose
 
   deploy-package:
