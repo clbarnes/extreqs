@@ -108,3 +108,28 @@ build-backend = "setuptools.build_meta"
 ```
 
 Look out for dependency specifiers which are accepted by pip, but not by setuptools (e.g. editable install `-e` or references to other requirement files `-r`).
+
+## Development
+
+Contributions are welcome, although any broadening of extreqs' scope is unlikely to be accepted - raise an issue first!
+
+Releases are made like this
+
+```sh
+# commit all your changes
+git add .
+git commit -m "Prepare for a new version"
+
+# bump the version
+uv version --bump minor
+
+# commit the version bump
+git add .
+git commit -m "Bump to version $(uv version --short)"
+
+# tag the commit
+git tag -a "v$(uv version --short)" -m "New feature X"
+
+# push to CI, which will do the releasing
+git push --follow-tags
+```
