@@ -1,5 +1,4 @@
 import logging
-import sys
 import typing as tp
 from collections import defaultdict
 from pathlib import Path
@@ -9,7 +8,7 @@ from requirements.requirement import Requirement
 logger = logging.getLogger(__name__)
 
 
-def str_as_list(s: tp.Optional[tp.Union[str, tp.List[str]]]) -> tp.List[str]:
+def str_as_list(s: str | list[str] | None) -> list[str]:
     if s is None:
         return []
     if isinstance(s, str):
@@ -23,7 +22,7 @@ UNSUPPORTED_VCS = {"git", "hg", "svn", "bzr"}
 class Parser:
     def __init__(self, fpath, file_context=None) -> None:
         self.file_context = str_as_list(file_context)
-        self.block_context: tp.List[str] = []
+        self.block_context: list[str] = []
         self.fpath = fpath
         self.line_num = -1
 
@@ -117,7 +116,7 @@ def merge_install_extras(*install_extras):
 def parse_requirement_files(
     *req_files: Path,
     **extra_req_files: Path,
-) -> tp.Tuple[tp.List[str], tp.Dict[str, tp.List[str]]]:
+) -> tuple[list[str], dict[str, list[str]]]:
     """Parse requirements files into setuptools requirements.
 
     Requirements files whose listed dependencies all belong to
@@ -144,13 +143,9 @@ def parse_requirement_files(
     return (d["install_requires"], d["extras_require"])
 
 
-if sys.version_info < (3, 8):
-    ParsedFiles = dict
-else:
-
-    class ParsedFiles(tp.TypedDict):
-        install_requires: tp.List[str]
-        extras_require: tp.Dict[str, tp.List[str]]
+class ParsedFiles(tp.TypedDict):
+    install_requires: list[str]
+    extras_require: dict[str, list[str]]
 
 
 def parse_requirement_files_dict(
